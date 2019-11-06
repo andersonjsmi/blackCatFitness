@@ -25,7 +25,7 @@ import org.json.JSONObject;
  * @author anderson
  */
 public class Supervisor {
-    private final ClientMqttCallback client;
+
     private final TimerTask tarefa;
     private final Timer tick;
     private static long timer;
@@ -76,7 +76,7 @@ public class Supervisor {
         };
         tick.schedule(tarefa, 0, 1000);
         
-        client = new ClientMqttCallback();
+        
     }
     
     public static void tick(){
@@ -91,15 +91,12 @@ public class Supervisor {
         session.setCreated_at(Calendar.getInstance());
         save(session);
         
-        client.connect();
-        
         timer = 0;
         running = true;
     }
     
     public void stop(){
         running = false;
-        client.disconnect();
         
         session.setLength(timer);
         update(session);
