@@ -28,5 +28,4 @@ public class ListenerMQTT implements IMqttMessageListener{
         Supervisor.send(mm);
         
     }
-    
 }

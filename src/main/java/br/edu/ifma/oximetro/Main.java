@@ -86,5 +86,4 @@ public class Main extends JFrame {
         mainFrame.setVisible(true);
        
     }
-    
 }

@@ -114,6 +114,5 @@ public class ClientMQTT implements MqttCallback{
     @Override
     public void deliveryComplete(IMqttDeliveryToken imdt) {
         
-    }
-    
+    }    
 }
