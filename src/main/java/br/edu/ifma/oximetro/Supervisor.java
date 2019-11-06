@@ -144,7 +144,6 @@ public class Supervisor {
         return persons;
     }
     
-    
     public static Person getPerson(long id){
         connect();
         Person person = manager.find(Person.class, id);
