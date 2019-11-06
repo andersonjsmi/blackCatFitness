@@ -34,6 +34,7 @@ public class Main extends JFrame {
     }
     
     public void start(){
+        /*
         DefaultCategoryDataset ds = new DefaultCategoryDataset();
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("database");
         EntityManager manager = factory.createEntityManager();
@@ -48,8 +49,11 @@ public class Main extends JFrame {
         
         manager.close();
         factory.close();
-        ClientMqttCallback client = new ClientMqttCallback();
-        client.connect();
+        */
+        ClientMQTT client = new ClientMQTT("tcp://127.0.0.1:1883");
+        client.init();
+        
+        new ListenerMQTT(client, "ifma/dee/oximetro", 0);
     }
     
     public static void logger(String message){

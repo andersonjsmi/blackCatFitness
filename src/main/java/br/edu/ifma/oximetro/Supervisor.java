@@ -17,6 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -40,25 +41,29 @@ public class Supervisor {
         Telemetry telemetry;
         JSONObject oximeterObject;
         
-        oximeterObject = new JSONObject(jsonString);
-        
-        telemetry  = new Telemetry();
-        
-        telemetry.setSession(session);
-        telemetry.setDeviceName(oximeterObject.getString("device"));
-        telemetry.setBpm(oximeterObject.getFloat("bpm"));
-        telemetry.setSpo2(oximeterObject.getInt("spo2"));
-        telemetry.setCreated_at(Calendar.getInstance());
-        telemetry.setZone(MainFrame.getPerson().getBPMZone(telemetry.getBpm()));
-        
-        save(telemetry);
-        
-        Main.zones(telemetry);
-        
-        String logMessage = "receive data from " + telemetry.getDeviceName() + ", at " + today.toString();
-        
-        Main.logger(logMessage);
-        
+        try{
+            oximeterObject = new JSONObject(jsonString);
+
+            telemetry  = new Telemetry();
+
+            telemetry.setSession(session);
+            telemetry.setDeviceName(oximeterObject.getString("device"));
+            telemetry.setBpm(oximeterObject.getFloat("bpm"));
+            telemetry.setSpo2(oximeterObject.getInt("spo2"));
+            telemetry.setCreated_at(Calendar.getInstance());
+            telemetry.setZone(MainFrame.getPerson().getBPMZone(telemetry.getBpm()));
+
+            save(telemetry);
+
+            Main.zones(telemetry);
+
+            String logMessage = "receive data from " + telemetry.getDeviceName() + ", at " + today.toString();
+
+            Main.logger(logMessage);
+        }catch(JSONException ex){
+            Main.logger("DEVICE MESSAGE IS NOT A JSON OBJECT!");
+        }
+        System.err.println("message arrive");
     }
     
     public Supervisor(){
@@ -97,8 +102,18 @@ public class Supervisor {
         client.disconnect();
         
         session.setLength(timer);
-        save(session);
+        update(session);
         session = null;
+    }
+    
+    public static void update(Object object){
+        connect();
+        
+        manager.getTransaction().begin();
+        manager.merge(object);
+        manager.getTransaction().commit();
+        
+        close();
     }
     
     public static void save(Object object){
